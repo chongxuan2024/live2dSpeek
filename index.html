@@ -26,13 +26,9 @@
 </div>
 
 <script type="text/javascript">
-    // 数字人模型
+
+    let model4;
     const cubism4Model = "./assets/kei_vowels_pro/kei_vowels_pro.model3.json";
-    // const cubism4Model = "./assets/Hiyori/Hiyori.model3.json";
-    // const cubism4Model = "./assets/March 7th/March 7th.model3.json";
-    // const cubism4Model = "./assets/haru/haru_greeter_t03.model3.json";
-
-
     const live2d = PIXI.live2d;
     (async function main() {
         const app = new PIXI.Application({
@@ -58,7 +54,7 @@
             draggable(model);
         });
 
-        const model4 = models[0];
+        model4 = models[0];
         console.log(innerWidth)
         // model4.x = innerWidth / 2;
         // 居中显示
@@ -78,28 +74,6 @@
         $("#play").click(function () {
             talk(model4, "./demo.mp3");
         });
-
-        $("#start").click(function () {
-            console.log($("#text").val());
-            let text = $("#text").val().trim();
-            if (text == "") {
-                alert("请输入内容");
-                return false;
-            }
-            $("#start").prop("disabled", true);
-            axios.get("http://127.0.0.1:2020/dealAudio?file_name=test.mp3&voice=xiaoxiao&text=" + text)
-                .then(response => {
-                    console.log(response.data);
-                    const audioUrl = response.data + "?v=" + new Date().getTime();
-                    talk(model4, audioUrl);
-                    $("#start").prop("disabled", false);
-                })
-                .catch(error => {
-                    console.error('请求接口失败:', error);
-                    $("#start").prop("disabled", false);
-                });
-        });
-
 
     })();
 
