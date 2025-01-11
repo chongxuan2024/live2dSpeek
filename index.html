@@ -14,10 +14,6 @@
 
 <body>
 <canvas id="canvas"></canvas>
-<div id="control">
-    <div>1、测试说话</div>
-    <button id="play">测试音频</button>
-</div>
 
 <script type="text/javascript">
     let model4;
@@ -49,7 +45,8 @@
             model.scale.set(scale);
 
             // 可以根据需求调整模型的位置，这里简单设置垂直方向位置为屏幕高度的10%处（可按需修改）
-            model.y = screenHeight * 0.1;
+            model.y = 5;
+            model.x = 5 ;
 
             console.log('screenWidth: ', screenWidth);
             console.log('screenHeight: ', screenHeight);
@@ -57,29 +54,8 @@
             console.log('model height: ', model.height);
             console.log('scale: ', scale);
 
-            // draggable(model);
         });
-
         model4 = models[0];
-        console.log(window.innerWidth)
-        // 居中显示模型（基于当前缩放后的模型宽度）
-        model4.x = (screenWidth - model4.width * model4.scale.x) / 2;
-
-        model4.on("hit", (hitAreas) => {
-            if (hitAreas.includes("Body")) {
-                model4.motion("Tap");
-            }
-
-            if (hitAreas.includes("Head")) {
-                model4.expression();
-            }
-        });
-
-
-        $("#play").click(function () {
-            talk(model4, "./demo.mp3");
-        });
-
     })();
 
 
@@ -102,37 +78,8 @@
 
     }
 
-
-    // function draggable(model) {
-    //     model.buttonMode = true;
-    //     model.on("pointerdown", (e) => {
-    //         model.dragging = true;
-    //         model._pointerX = e.data.global.x - model.x;
-    //         model._pointerY = e.data.global.y - model.y;
-    //     });
-    //     model.on("pointermove", (e) => {
-    //         if (model.dragging) {
-    //             model.position.x = e.data.global.x - model._pointerX;
-    //             model.position.y = e.data.global.y - model._pointerY;
-    //         }
-    //     });
-    //     model.on("pointerupoutside", () => (model.dragging = false));
-    //     model.on("pointerup", () => (model.dragging = false));
-    // }
-
 </script>
 
-
-<style>
-    #control {
-        position: absolute;
-        top: 50px;
-        left: 50px;
-        color: #ffffff;
-        font-size: 18px;
-    }
-
-</style>
 
 </body>
 </html>
