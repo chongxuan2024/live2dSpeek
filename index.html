@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=0.2, maximum-scale=2, user-scalable=yes">
-    
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <script src="./js/live2dcubismcore.min.js"></script>
     <script src="./js/live2d.min.js"></script>
     <script src="./js/pixi.min.js"></script>
@@ -16,7 +15,7 @@
 <body>
 <canvas id="canvas"></canvas>
 <div id="control">
-    <div class="label">1、测试说话</div>
+    <div>1、测试说话</div>
     <button id="play">测试音频</button>
 </div>
 
@@ -51,6 +50,12 @@
 
             // 可以根据需求调整模型的位置，这里简单设置垂直方向位置为屏幕高度的10%处（可按需修改）
             model.y = screenHeight * 0.1;
+
+            console.log('screenWidth: ', screenWidth);
+            console.log('screenHeight: ', screenHeight);
+            console.log('model width: ', model.width);
+            console.log('model height: ', model.height);
+            console.log('scale: ', scale);
 
             // draggable(model);
         });
@@ -127,10 +132,6 @@
         font-size: 18px;
     }
 
-   .label {
-        font-size: 32px;
-        font-weight: 800;
-    }
 </style>
 
 </body>
