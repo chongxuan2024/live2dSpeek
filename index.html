@@ -1,8 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=0.2, maximum-scale=5, user-scalable=yes">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>VR看房</title>
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Babylon.js -->
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+
+    <!-- Live2D -->
     <script src="./js/live2dcubismcore.min.js"></script>
     <script src="./js/live2d.min.js"></script>
     <script src="./js/pixi.min.js"></script>
@@ -10,77 +19,33 @@
     <script src="./js/cubism4.min.js"></script>
     <script src="./js/jquery-3.1.1.min.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <title>live2dSpeek</title>
 </head>
-
 <body>
-<canvas id="canvas"></canvas>
+    <div class="container">
+        <!-- Live2D 容器 -->
+        <div id="live2d-container"></div>
+        
+        <!-- 3D VR看房容器 -->
+        <div class="canvas-container">
+            <canvas id="renderCanvas"></canvas>
+        </div>
 
-<script type="text/javascript">
-    let model4;
-    const cubism4Model = "./assets/kei_vowels_pro/kei_vowels_pro.model3.json";
-    const live2d = PIXI.live2d;
-    (async function main() {
-        const app = new PIXI.Application({
-            view: document.getElementById("canvas"),
-            autoStart: true,
-            resizeTo: window,
-            backgroundColor: 0x333333
-        });
+        <!-- 对话记录显示框 -->
+        <div class="dialog-box">
+            <div class="dialog-header">对话记录</div>
+            <div id="dialog-content" class="dialog-content"></div>
+        </div>
+        
+        <!-- 控制按钮容器 -->
+        <div class="controls">
+            <button id="changeLive2D" class="control-btn">切换人物</button>
+            <button id="changeHouse" class="control-btn">切换房屋</button>
+        </div>
+    </div>
 
-        const models = await Promise.all([
-            live2d.Live2DModel.from(cubism4Model)
-        ]);
-
-        models.forEach((model) => {
-            app.stage.addChild(model);
-
-            // 获取手机屏幕宽度和高度（这里基于浏览器环境中的window.innerWidth和window.innerHeight，在Android WebView中同样适用）
-            const screenWidth = window.innerWidth;
-            const screenHeight = window.innerHeight;
-
-            // 计算模型基于屏幕宽高的缩放比例，使模型尽可能大的同时完整显示在屏幕内
-            // const scale = Math.min(screenWidth / model.width, screenHeight / model.height);
-            const scale = 0.3;
-            // 设置模型缩放比例
-            model.scale.set(scale);
-
-            // 可以根据需求调整模型的位置，这里简单设置垂直方向位置为屏幕高度的10%处（可按需修改）
-            model.y = 5;
-            model.x = 5 ;
-
-            console.log('screenWidth: ', screenWidth);
-            console.log('screenHeight: ', screenHeight);
-            console.log('model width: ', model.width);
-            console.log('model height: ', model.height);
-            console.log('scale: ', scale);
-
-        });
-        model4 = models[0];
-    })();
-
-
-    function talk(model, audio) {
-        var audio_link = audio;  //[Optional arg, can be null or empty] [relative or full url path] [mp3 or wav file] "./Keira.wav"
-        var volume = 1; // [Optional arg, can be null or empty] [0.0 - 1.0]
-        var expression = 8; // [Optional arg, can be null or empty] [index|name of expression]
-        var resetExpression = true; // [Optional arg, can be null or empty] [true|false] [default: true] [if true, expression will be reset to default after animation is over]
-        var crossOrigin = "anonymous"; // [Optional arg, to use not same-origin audios] [DEFAULT: null]
-
-        model.speak(audio_link, {
-            volume: volume,
-            expression: expression,
-            resetExpression: resetExpression,
-            crossOrigin: crossOrigin
-        })
-        model.speak(audio_link)
-        model.speak(audio_link, {volume: volume})
-        model.speak(audio_link, {expression: expression, resetExpression: resetExpression})
-
-    }
-
-</script>
-
-
+    <!-- 应用脚本 -->
+    <script src="js/babylon-scene.js"></script>
+    <script src="js/live2d.js"></script>
+    <script src="js/main.js"></script>
 </body>
-</html>
+</html> 
