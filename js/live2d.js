@@ -3,7 +3,7 @@ class Live2DManager {
         this.currentModel = 0;
         this.models = [
             'models/assets/kei_vowels_pro/kei_vowels_pro.model3.json',
-            'models/assets/shizuku/shizuku.model.json'
+            'models/assets/haru/haru_greeter_t03.model3.json'
         ];
         this.modelConfigs = {
             'models/assets/kei_vowels_pro/kei_vowels_pro.model3.json': {
@@ -11,7 +11,7 @@ class Live2DManager {
                 width: 300,
                 height: 400
             },
-            'models/assets/shizuku/shizuku.model3.json': {
+            'models/assets/haru/haru_greeter_t03.model3.json': {
                 type: 'full',
                 width: 300,
                 height: 600
