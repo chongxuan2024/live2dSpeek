@@ -125,17 +125,24 @@ class Live2DManager {
             this.live2DModel.buttonMode = true;
             this.live2DModel.interactive = true;
 
-            // 添加点击事件
-            this.live2DModel.on('click', async () => {
-                console.log('Live2D model clicked');
-                // 播放音频并添加对话记录
+            // 创建绑定了正确 this 上下文的事件处理函数
+            const boundHandleInteraction = async () => {
+                console.log('Live2D model interacted');
                 try {
                     this.addDialogMessage('您好，请问有什么可以帮您？', false);
                     await window.talk(this.live2DModel, 'mp3/demo.mp3');
                 } catch (error) {
                     console.error('Error playing audio:', error);
                 }
-            });
+            };
+
+            // 添加点击和触摸事件
+            this.live2DModel.on('click', boundHandleInteraction);     // PC端点击
+            this.live2DModel.on('tap', boundHandleInteraction);       // 移动端点击
+            this.live2DModel.on('touchstart', boundHandleInteraction); // 移动端触摸
+            this.live2DModel.on('touchend', boundHandleInteraction);
+            this.live2DModel.on('pointerdown', boundHandleInteraction);
+            this.live2DModel.on('pointerup', boundHandleInteraction);
 
             // 暴露模型到全局
             window.live2DModel = this.live2DModel;
@@ -202,4 +209,15 @@ document.addEventListener('DOMContentLoaded', () => {
         // 添加初始欢迎消息
         window.addDialogMessage('您好，欢迎来到VR看房，我是您的专属客服，请问有什么可以帮您？', false);
     });
-}); 
+});
+
+// 定义事件处理函数
+async function handleInteraction() {
+    console.log('Live2D model interacted');
+    try {
+        this.addDialogMessage('您好，请问有什么可以帮您？', false);
+        await window.talk(this.live2DModel, 'mp3/demo.mp3');
+    } catch (error) {
+        console.error('Error playing audio:', error);
+    }
+} 
