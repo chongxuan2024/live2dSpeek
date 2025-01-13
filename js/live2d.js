@@ -3,7 +3,7 @@ class Live2DManager {
         this.currentModel = 0;
         this.models = [
             'models/assets/kei_vowels_pro/kei_vowels_pro.model3.json',
-            'models/assets/March 7th/March 7th.model3.json'
+            'models/assets/shizuku/shizuku.model.json'
         ];
         this.modelConfigs = {
             'models/assets/kei_vowels_pro/kei_vowels_pro.model3.json': {
