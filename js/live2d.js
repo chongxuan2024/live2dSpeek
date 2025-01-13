@@ -11,7 +11,7 @@ class Live2DManager {
                 width: 300,
                 height: 400
             },
-            'models/assets/March 7th/March 7th.model3.json': {
+            'models/assets/shizuku/shizuku.model3.json': {
                 type: 'full',
                 width: 300,
                 height: 600
