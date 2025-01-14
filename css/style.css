@@ -236,4 +236,120 @@ html, body {
 
 .live2d-message .message-header {
     text-align: left;
-} 
+}
+
+/* 输入框容器样式 */
+.dialog-input-container {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #eee;
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+.dialog-input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-right: 8px;
+    font-size: 14px;
+    outline: none;
+}
+
+.dialog-input:focus {
+    border-color: #4a90e2;
+}
+
+.dialog-send-btn {
+    padding: 8px 15px;
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.dialog-send-btn:hover {
+    background-color: #357abd;
+}
+
+/* 调整对话内容区域的最大高度，为输入框留出空间 */
+.dialog-content {
+    max-height: 220px;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+    .dialog-input {
+        padding: 6px;
+        font-size: 12px;
+    }
+
+    .dialog-send-btn {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+}
+
+/* 适配不同屏幕高度 */
+@media (max-height: 600px) {
+    #live2d-container {
+        transform: scale(0.7);
+        transform-origin: top right;
+    }
+}
+
+/* 适配超宽屏 */
+@media (min-aspect-ratio: 16/9) {
+    .container {
+        max-width: 1920px;
+        margin: 0 auto;
+    }
+}
+
+/* 适配超窄屏 */
+@media (max-aspect-ratio: 9/16) {
+    #live2d-container {
+        transform: scale(0.6);
+        transform-origin: top right;
+    }
+}
+
+/* Loading 按钮样式 */
+.control-btn.loading {
+    position: relative;
+    color: transparent;
+    pointer-events: none;
+    background-color: rgba(255, 255, 255, 0.7);
+}
+
+.control-btn.loading::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 50%;
+    left: 50%;
+    margin: -8px 0 0 -8px;
+    border: 2px solid #4a90e2;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: button-loading-spinner 0.75s linear infinite;
+}
+
+@keyframes button-loading-spinner {
+    from {
+        transform: rotate(0turn);
+    }
+    to {
+        transform: rotate(1turn);
+    }
+}
+
+/* 禁用状态样式 */
+.control-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}

@@ -216,9 +216,9 @@ class BabylonSceneManager {
         );
     }
 
-    switchHouse() {
+    async switchHouse() {
         this.currentHouseIndex = (this.currentHouseIndex + 1) % this.houses.length;
-        this.loadHouse(this.houses[this.currentHouseIndex]);
+        await this.loadHouse(this.houses[this.currentHouseIndex]);
     }
 
     run() {

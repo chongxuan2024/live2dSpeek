@@ -31,15 +31,24 @@
         </div>
 
         <!-- 对话记录显示框 -->
-        <div class="dialog-box">
-            <div class="dialog-header">对话记录</div>
+        <div id="dialogBox" class="dialog-box">
+            <div class="dialog-header">
+                <span>对话记录</span>
+                <button id="closeDialog" style="width:20px;" class="dialog-close-btn">&times;</button>
+            </div>
             <div id="dialog-content" class="dialog-content"></div>
+            <div class="dialog-input-container">
+                <input type="text" id="userInput" class="dialog-input" placeholder="请输入您的问题...">
+                <button id="sendMessage" class="dialog-send-btn">发送</button>
+            </div>
         </div>
         
         <!-- 控制按钮容器 -->
         <div class="controls">
             <button id="changeLive2D" class="control-btn">切换人物</button>
             <button id="changeHouse" class="control-btn">切换房屋</button>
+            <button id="resetHouse" class="control-btn">重置房屋视角</button>
+            <button id="showDialog" class="control-btn" style="display: none;">显示对话</button>
         </div>
     </div>
 
