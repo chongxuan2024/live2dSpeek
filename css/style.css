@@ -19,24 +19,6 @@ html, body {
     flex-direction: column;
 }
 
-/* Live2D 容器样式 */
-#live2d-container {
-    position: absolute;
-    top: 0;
-    right: 0;
-    z-index: 100;
-    pointer-events: none; /* 允许点击穿透到下层 */
-    touch-action: manipulation; /* 优化触摸操作 */
-    -webkit-tap-highlight-color: transparent; /* 移除触摸高亮 */
-}
-
-#live2d-container canvas {
-    pointer-events: auto; /* 恢复canvas的点击事件 */
-    touch-action: manipulation;
-    -webkit-user-select: none; /* 防止长按选中 */
-    user-select: none;
-}
-
 /* 3D 场景容器样式 */
 .canvas-container {
     flex: 1;
@@ -352,4 +334,52 @@ html, body {
 .control-btn:disabled {
     cursor: not-allowed;
     opacity: 0.7;
+}
+
+/* 视频画板容器样式 */
+#video-canvas-container {
+    z-index: 1000;
+    border-radius: 8px;
+    overflow: hidden;
+    position: fixed;
+    left: 20px;
+    top: 20px;
+    width: 300px;
+    height: auto;
+    pointer-events: auto;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+#videoCanvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: contain;
+}
+
+.message {
+    margin: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    max-width: 80%;
+}
+
+.user-message {
+    background-color: #e3f2fd;
+    margin-left: auto;
+}
+
+.live2d-message {
+    background-color: #f5f5f5;
+    margin-right: auto;
+}
+
+.message-header {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.message-content {
+    word-wrap: break-word;
 }

@@ -1,7 +1,53 @@
 document.addEventListener('DOMContentLoaded', async () => {
-    // 初始化Live2D
-    const live2DManager = new Live2DManager();
-    await live2DManager.init();
+    // 添加全局对话消息方法
+    window.addDialogMessage = function(text, isUser = false) {
+        const dialogContent = document.getElementById('dialog-content');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${isUser ? 'user-message' : 'live2d-message'}`;
+        
+        // 创建时间戳
+        const now = new Date();
+        const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+        
+        // 创建角色名称和时间的容器
+        const headerDiv = document.createElement('div');
+        headerDiv.className = 'message-header';
+        headerDiv.textContent = `${timeStr} ${isUser ? '您' : '客服'}`;
+        
+        // 创建消息内容容器
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'message-content';
+        contentDiv.textContent = text;
+        
+        // 组装消息
+        messageDiv.appendChild(headerDiv);
+        messageDiv.appendChild(contentDiv);
+        
+        dialogContent.appendChild(messageDiv);
+        // 自动滚动到底部
+        dialogContent.scrollTop = dialogContent.scrollHeight;
+    };
+
+    // 创建视频播放器实例
+    window.videoPlayer = new VideoPlayer();
+
+    // 在第一次用户交互时初始化视频
+    const initVideoOnInteraction = async () => {
+        try {
+            await window.videoPlayer.loadVideo();
+            console.log('视频加载完成');
+            window.videoPlayer.startPlaying();
+            // 添加初始欢迎消息
+            window.addDialogMessage('您好，欢迎来到VR看房，我是您的专属客服，请问有什么可以帮您？', false);
+        } catch (error) {
+            console.error('视频加载失败:', error);
+        }
+        // 移除事件监听器
+        document.removeEventListener('click', initVideoOnInteraction);
+    };
+
+    // 监听用户交互
+    document.addEventListener('click', initVideoOnInteraction, { once: true });
 
     // 获取切换房屋按钮
     const changeHouseBtn = document.getElementById('changeHouse');
@@ -27,11 +73,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // 初始化完成后取消加载状态
     setButtonLoading(false);
-
-    // 绑定按钮事件
-    document.getElementById('changeLive2D').addEventListener('click', () => {
-        live2DManager.switchModel();
-    });
 
     // 修改切换房屋按钮的点击事件
     changeHouseBtn.addEventListener('click', async () => {
@@ -78,26 +119,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.addDialogMessage(message, true);
 
         try {
-            // TODO: 发送消息到服务端
-            // const response = await fetch('YOUR_API_ENDPOINT', {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //     },
-            //     body: JSON.stringify({ message })
-            // });
-            // const data = await response.json();
-            
             // 清空输入框
             userInput.value = '';
 
-            // 模拟服务端响应（实际项目中替换为真实的服务端响应）
+            // 模拟服务端响应
             setTimeout(() => {
                 window.addDialogMessage('收到您的问题，我们会尽快为您解答。', false);
+                // 在回复消息后播放音频并同步视频
+                window.videoPlayer.syncWithAudio('mp3/demo.mp3');
             }, 500);
 
         } catch (error) {
-            console.error('Error sending message:', error);
+            console.error('Error:', error);
             window.addDialogMessage('消息发送失败，请稍后重试。', false);
         }
     }

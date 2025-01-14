@@ -11,20 +11,15 @@
     <script src="https://cdn.babylonjs.com/babylon.js"></script>
     <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
 
-    <!-- Live2D -->
-    <script src="./js/live2dcubismcore.min.js"></script>
-    <script src="./js/live2d.min.js"></script>
-    <script src="./js/pixi.min.js"></script>
-    <!-- if only Cubism 4 support-->
-    <script src="./js/cubism4.min.js"></script>
-    <script src="./js/jquery-3.1.1.min.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 </head>
 <body>
     <div class="container">
-        <!-- Live2D 容器 -->
-        <div id="live2d-container"></div>
-        
+        <!-- 视频画板容器 -->
+        <div id="video-canvas-container">
+            <canvas id="videoCanvas"></canvas>
+        </div>
+
         <!-- 3D VR看房容器 -->
         <div class="canvas-container">
             <canvas id="renderCanvas"></canvas>
@@ -42,10 +37,9 @@
                 <button id="sendMessage" class="dialog-send-btn">发送</button>
             </div>
         </div>
-        
+
         <!-- 控制按钮容器 -->
         <div class="controls">
-            <button id="changeLive2D" class="control-btn">切换人物</button>
             <button id="changeHouse" class="control-btn">切换房屋</button>
             <button id="resetHouse" class="control-btn">重置房屋视角</button>
             <button id="showDialog" class="control-btn" style="display: none;">显示对话</button>
@@ -54,7 +48,7 @@
 
     <!-- 应用脚本 -->
     <script src="js/babylon-scene.js"></script>
-    <script src="js/live2d.js"></script>
+    <script src="js/video-player.js"></script>
     <script src="js/main.js"></script>
 </body>
-</html> 
+</html>
