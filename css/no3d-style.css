@@ -71,7 +71,7 @@ html, body {
     margin: 6px;
     padding: 8px 10px;
     max-width: 90%;
-    color: #fff;
+    color: #4a9eff;
 }
 
 .user-message {
@@ -86,13 +86,13 @@ html, body {
 
 .message-header {
     font-size: 11px;
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(74, 158, 255, 0.8);
 }
 
 .message-content {
     font-size: 13px;
     line-height: 1.4;
-    color: rgba(255, 255, 255, 0.9);
+    color: #4a9eff;
 }
 
 /* 底部输入区域样式 */

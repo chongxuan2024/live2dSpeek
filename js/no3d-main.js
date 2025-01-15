@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             await window.videoPlayer.loadVideo();
             console.log('视频加载完成');
             // 添加初始欢迎消息
-            window.addDialogMessage('您好，欢迎来到VR看房，我是您的专属客服，请问有什么可以帮您？', false);
+            window.addDialogMessage('您好，我是您的AI助手，请问有什么可以帮您？', false);
         } catch (error) {
             console.error('视频加载失败:', error);
         }
@@ -47,9 +47,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // 监听用户交互
     document.addEventListener('click', initVideoOnInteraction, { once: true });
-
-    // 对话框控制
-    const dialogBox = document.getElementById('dialogBox');
 
     // 添加消息发送功能
     const userInput = document.getElementById('userInput');
@@ -89,13 +86,4 @@ document.addEventListener('DOMContentLoaded', async () => {
             sendMessage();
         }
     });
-
-    // 初始化Babylon场景并暴露到全局
-    try{
-        window.babylonManager = new BabylonSceneManager();
-        await window.babylonManager.createScene();
-        window.babylonManager.run();
-    }catch(error){
-        console.error('Babylon初始化失败:', error);
-    }
 }); 
