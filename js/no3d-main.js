@@ -52,6 +52,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     const userInput = document.getElementById('userInput');
     const sendButton = document.getElementById('sendMessage');
 
+    // 音频文件列表
+    const audioFiles = [
+        'mp3/2.mp3',
+        'mp3/3.mp3',
+        'mp3/4.mp3',
+        'mp3/5.mp3',
+        'mp3/demo.mp3',
+    ];
+
+    // 获取随机音频文件
+    function getRandomAudioFile() {
+        const randomIndex = Math.floor(Math.random() * audioFiles.length);
+        return audioFiles[randomIndex];
+    }
+
     // 发送消息的函数
     async function sendMessage() {
         const message = userInput.value.trim();
@@ -68,7 +83,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             setTimeout(() => {
                 window.addDialogMessage('收到您的问题，我们会尽快为您解答。', false);
                 // 在回复消息后播放音频并同步视频
-                window.videoPlayer.syncWithAudio('mp3/demo.mp3');
+                window.videoPlayer.syncWithAudio(getRandomAudioFile());
             }, 500);
 
         } catch (error) {

@@ -89,6 +89,14 @@ class VideoPlayer {
                         if (result) {
                             this.frameCount = this.frames.length;
                             console.log(`成功提取 ${this.frameCount} 帧`);
+                            // 计算内存占用
+                            let totalBytes = 0;
+                            for (const frame of this.frames) {
+                                totalBytes += frame.data.length;
+                            }
+                            const mbSize = (totalBytes / (1024 * 1024)).toFixed(2);
+                            console.log(`帧序列占用内存: ${mbSize} MB`);
+                            console.log(`平均每帧大小: ${(totalBytes / this.frameCount / 1024).toFixed(2)} KB`);
                             this.canvas.style.display = 'block';
                             document.body.removeChild(video);
                             this.startLoopAnimation();
