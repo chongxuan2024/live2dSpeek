@@ -36,7 +36,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             await window.videoPlayer.loadVideo();
             console.log('视频加载完成');
-            window.videoPlayer.startPlaying();
             // 添加初始欢迎消息
             window.addDialogMessage('您好，欢迎来到VR看房，我是您的专属客服，请问有什么可以帮您？', false);
         } catch (error) {
@@ -67,10 +66,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     setButtonLoading(true);
 
     // 初始化Babylon场景并暴露到全局
-    window.babylonManager = new BabylonSceneManager();
-    await window.babylonManager.createScene();
-    window.babylonManager.run();
-
+    try{
+        window.babylonManager = new BabylonSceneManager();
+        await window.babylonManager.createScene();
+        window.babylonManager.run();
+    }catch(error){
+        console.error('Babylon初始化失败:', error);
+    }
     // 初始化完成后取消加载状态
     setButtonLoading(false);
 
@@ -91,20 +93,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // 对话框控制
     const dialogBox = document.getElementById('dialogBox');
-    const closeDialogBtn = document.getElementById('closeDialog');
-    const showDialogBtn = document.getElementById('showDialog');
-
-    // 关闭对话框
-    closeDialogBtn.addEventListener('click', () => {
-        dialogBox.style.display = 'none';
-        showDialogBtn.style.display = 'block';
-    });
-
-    // 显示对话框
-    showDialogBtn.addEventListener('click', () => {
-        dialogBox.style.display = 'flex';
-        showDialogBtn.style.display = 'none';
-    });
 
     // 添加消息发送功能
     const userInput = document.getElementById('userInput');

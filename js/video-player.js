@@ -18,11 +18,13 @@ class VideoPlayer {
             const video = document.createElement('video');
             video.src = 'video/speaker3.mp4';
             video.crossOrigin = 'anonymous';
-            
-            // 添加这些属性来允许自动播放
+
+            // 优化视频加载属性
             video.muted = true;
             video.playsInline = true;
-            
+            video.preload = 'auto';
+            video.playbackRate = 2; // 加快视频处理速度
+
             // 设置视频样式
             video.style.display = 'none';
             document.body.appendChild(video);
@@ -30,54 +32,64 @@ class VideoPlayer {
             video.addEventListener('loadedmetadata', async () => {
                 this.canvas.width = video.videoWidth;
                 this.canvas.height = video.videoHeight;
-                
+
                 // 设置默认帧率为60fps
-                this.fps = 60;
-                const totalFrames = 180; // 设置总帧数
+                this.fps = 30;
+                const totalFrames = 90; // 设置总帧数
                 
-                console.log(`视频实际帧率: ${this.fps} fps`);
-                console.log(`视频时长: ${video.duration} 秒`);
+                console.log(`视频帧率设置: ${this.fps} fps`);
+                console.log(`视频时长期望3秒: ${video.duration} 秒`);
                 console.log(`开始提取 ${totalFrames} 帧...`);
-                
+
                 const extractFrames = async () => {
                     try {
                         let currentFrame = 0;
                         const frameInterval = video.duration / totalFrames;
+                        const batchSize = 10; // 批量处理帧数
 
                         const processFrame = async () => {
-                            if (currentFrame < totalFrames) {
-                                // 设置视频时间
-                                video.currentTime = currentFrame * frameInterval;
-                                
-                                // 等待视频更新到指定时间
-                                await new Promise(resolve => {
-                                    video.addEventListener('seeked', resolve, { once: true });
-                                });
+                            while (currentFrame < totalFrames) {
+                                // 批量处理多帧
+                                const endFrame = Math.min(currentFrame + batchSize, totalFrames);
+                                const promises = [];
 
-                                this.ctx.drawImage(video, 0, 0);
-                                this.frames.push(this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height));
-                                
-                                // 显示进度
-                                if (currentFrame % 10 === 0) {
-                                    console.log(`提取进度: ${Math.round((currentFrame / totalFrames) * 100)}%`);
+                                for (let i = currentFrame; i < endFrame; i++) {
+                                    // 设置视频时间
+                                    promises.push(new Promise(resolve => {
+                                        const time = i * frameInterval;
+                                        video.currentTime = time;
+
+                                        const onSeeked = () => {
+                                            this.ctx.drawImage(video, 0, 0);
+                                            this.frames[i] = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
+                                            video.removeEventListener('seeked', onSeeked);
+                                            resolve();
+                                        };
+
+                                        video.addEventListener('seeked', onSeeked);
+                                    }));
                                 }
-                                
-                                currentFrame++;
-                                await processFrame();
-                            } else {
-                                this.frameCount = this.frames.length;
-                                console.log(`成功提取 ${this.frameCount} 帧`);
-                                // 显示画板并清理视频元素
-                                this.canvas.style.display = 'block';
-                                document.body.removeChild(video);
-                                // 开始循环播放静音状态动画
-                                this.startLoopAnimation();
-                                resolve();
+
+                                // 等待当前批次的所有帧处理完成
+                                await Promise.all(promises);
+                                currentFrame = endFrame;
+
+                                // 显示进度
+                                console.log(`提取进度: ${Math.round((currentFrame / totalFrames) * 100)}%`);
                             }
+                            return true;
                         };
 
                         // 开始提取帧
-                        await processFrame();
+                        const result = await processFrame();
+                        if (result) {
+                            this.frameCount = this.frames.length;
+                            console.log(`成功提取 ${this.frameCount} 帧`);
+                            this.canvas.style.display = 'block';
+                            document.body.removeChild(video);
+                            this.startLoopAnimation();
+                            resolve();
+                        }
 
                     } catch (error) {
                         console.error('帧提取错误:', error);
@@ -97,7 +109,7 @@ class VideoPlayer {
             // 添加加载超时处理
             const timeoutId = setTimeout(() => {
                 reject(new Error('视频加载超时'));
-            }, 10000); // 10秒超时
+            }, 60000); // 60秒超时
 
             video.addEventListener('canplay', () => {
                 clearTimeout(timeoutId);
@@ -166,7 +178,7 @@ class VideoPlayer {
             const bufferLength = analyser.frequencyBinCount;
             const sampleRate = audioContext.sampleRate;
             const samplesPerFrame = Math.floor(sampleRate / this.fps);
-            
+
             // 存储音频片段信息
             const audioSegments = [];
             let isInSilence = false;
@@ -180,7 +192,7 @@ class VideoPlayer {
             for (let i = 0; i < framesCount; i++) {
                 const startSample = i * samplesPerFrame;
                 const endSample = Math.min(startSample + samplesPerFrame, audioData.length);
-                
+
                 // 计算这一帧的平均振幅
                 let sum = 0;
                 for (let j = startSample; j < endSample; j++) {
@@ -246,16 +258,16 @@ class VideoPlayer {
                 let requiredFrames = Math.floor(duration * this.fps);
 
                 if (segment.type === 'speaking') {
-                    
+
                     do{
-                        frameRanges.push([10, Math.min(95, 10 + requiredFrames)]);
-                        requiredFrames = requiredFrames - 85;
-                    }while(requiredFrames > 85);
+                        frameRanges.push([5, Math.min(45, 10 + requiredFrames)]);
+                        requiredFrames = requiredFrames - 40;
+                    }while(requiredFrames > 40);
                 } else { // silence
                     do{
-                        frameRanges.push([95, Math.min(180, 95 + requiredFrames)]);
-                        requiredFrames = requiredFrames - 85;
-                    }while(requiredFrames > 85);
+                        frameRanges.push([50, Math.min(90, 50 + requiredFrames)]);
+                        requiredFrames = requiredFrames - 50;
+                    }while(requiredFrames > 50);
                 }
             }
 
@@ -263,9 +275,14 @@ class VideoPlayer {
             console.log('对应的帧范围:', frameRanges);
 
             // 5. 播放音频和视频
+            // 增加try catch
             const source = audioContext.createBufferSource();
-            source.buffer = audioBuffer;
-            source.connect(audioContext.destination);
+            try{
+                source.buffer = audioBuffer;
+                source.connect(audioContext.destination);
+            }catch(error){
+                console.error('音频播放错误:', error);
+            }
 
             let currentSegmentIndex = 0;
             let startTime = audioContext.currentTime;
@@ -279,13 +296,19 @@ class VideoPlayer {
 
                 await this.playFrameRange(frameRange[0], frameRange[1], duration);
                 currentSegmentIndex++;
-                
+
                 if (currentSegmentIndex < audioSegments.length) {
                     setTimeout(playNextSegment, 0);
                 }
             };
 
-            source.start();
+            // 增加try catch
+            try{
+                source.start();
+            }catch(error){
+                console.error('音频播放错误:', error);
+            }
+
             playNextSegment();
 
             return new Promise((resolve) => {
@@ -332,16 +355,16 @@ class VideoPlayer {
                 });
                 console.log('上一次动画已结束，开始循环播放');
             }
-   
+
 
 
 
         this.isInLoop = true;
-        const startFrame = 100;
-        const endFrame = 180;
+        const startFrame = 50;
+        const endFrame = 90;
         let currentIndex = 0;
         const frameCount = endFrame - startFrame;
-        
+
         const animate = () => {
             if (!this.isInLoop || this.isAnimating) {
                 return; // 如果动画被停止，则退出
@@ -354,8 +377,8 @@ class VideoPlayer {
 
             currentIndex = (currentIndex + 1) % frameCount;
 
-            // 使用 1/60 秒的间隔来播放，保持流畅
-            setTimeout(() => requestAnimationFrame(animate), 1000 / 60);
+            // 使用 1/30 秒的间隔来播放，保持流畅
+            setTimeout(() => requestAnimationFrame(animate), 1000 / 35);
         };
         if(!this.isAnimating){
             requestAnimationFrame(animate);
@@ -367,4 +390,4 @@ class VideoPlayer {
     stopLoopAnimation() {
         this.isInLoop = false;
     }
-} 
+}
