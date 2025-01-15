@@ -23,7 +23,7 @@ class VideoPlayer {
             video.muted = true;
             video.playsInline = true;
             video.preload = 'auto';
-            video.playbackRate = 2; // 加快视频处理速度
+            video.playbackRate = 1; // 加快视频处理速度
 
             // 设置视频样式
             video.style.display = 'none';
@@ -34,9 +34,13 @@ class VideoPlayer {
                 this.canvas.height = video.videoHeight;
 
                 // 设置默认帧率为60fps
-                this.fps = 30;
-                const totalFrames = 90; // 设置总帧数
-                
+                this.fps = 36.29;
+                const totalFrames = 124; // 设置总帧数
+                // 0秒，即0帧开始说话
+                // 1.6秒介绍，即58帧
+                // 59帧开始全部是静音
+                // 1.6~2.0有眨眼，放弃，使用2.0开始的帧 72
+
                 console.log(`视频帧率设置: ${this.fps} fps`);
                 console.log(`视频时长期望3秒: ${video.duration} 秒`);
                 console.log(`开始提取 ${totalFrames} 帧...`);
@@ -258,16 +262,20 @@ class VideoPlayer {
                 let requiredFrames = Math.floor(duration * this.fps);
 
                 if (segment.type === 'speaking') {
-
-                    do{
-                        frameRanges.push([5, Math.min(45, 10 + requiredFrames)]);
-                        requiredFrames = requiredFrames - 40;
-                    }while(requiredFrames > 40);
+                    // 将0和58帧提取出变量
+                    const startFrame = 0;
+                    const endFrame = 58;
+                    do {
+                        frameRanges.push([startFrame, Math.min(endFrame, startFrame + requiredFrames)]);
+                        requiredFrames = requiredFrames - (endFrame - startFrame);
+                    } while (requiredFrames > (endFrame - startFrame));
                 } else { // silence
-                    do{
-                        frameRanges.push([50, Math.min(90, 50 + requiredFrames)]);
-                        requiredFrames = requiredFrames - 50;
-                    }while(requiredFrames > 50);
+                    const startFrame = 72;
+                    const endFrame = 124;
+                    do {
+                        frameRanges.push([startFrame, Math.min(endFrame, startFrame + requiredFrames)]);
+                        requiredFrames = requiredFrames - (endFrame - startFrame);
+                    } while (requiredFrames > (endFrame - startFrame));
                 }
             }
 
@@ -277,10 +285,10 @@ class VideoPlayer {
             // 5. 播放音频和视频
             // 增加try catch
             const source = audioContext.createBufferSource();
-            try{
+            try {
                 source.buffer = audioBuffer;
                 source.connect(audioContext.destination);
-            }catch(error){
+            } catch (error) {
                 console.error('音频播放错误:', error);
             }
 
@@ -303,9 +311,9 @@ class VideoPlayer {
             };
 
             // 增加try catch
-            try{
+            try {
                 source.start();
-            }catch(error){
+            } catch (error) {
                 console.error('音频播放错误:', error);
             }
 
@@ -333,35 +341,35 @@ class VideoPlayer {
     }
 
     // 新增：循环播放静音状态的动画
-    async  startLoopAnimation() {
-        if ( this.isInLoop) {
+    async startLoopAnimation() {
+        if (this.isInLoop) {
             console.log('当前有动画正在播放，无法开始循环播放');
             return;
         }
 
 
-            // 如果当前正在播放动画，等待其结束
-            if (this.isAnimating) {
-                console.log('等待上一次动画结束...');
-                await new Promise(resolve => {
-                    const checkAnimation = () => {
-                        if (!this.isAnimating) {
-                            resolve();
-                        } else {
-                            setTimeout(checkAnimation, 100);
-                        }
-                    };
-                    checkAnimation();
-                });
-                console.log('上一次动画已结束，开始循环播放');
-            }
+        // 如果当前正在播放动画，等待其结束
+        if (this.isAnimating) {
+            console.log('等待上一次动画结束...');
+            await new Promise(resolve => {
+                const checkAnimation = () => {
+                    if (!this.isAnimating) {
+                        resolve();
+                    } else {
+                        setTimeout(checkAnimation, 100);
+                    }
+                };
+                checkAnimation();
+            });
+            console.log('上一次动画已结束，开始循环播放');
+        }
 
 
 
 
         this.isInLoop = true;
-        const startFrame = 50;
-        const endFrame = 90;
+        const startFrame = 72;
+        const endFrame = 124;
         let currentIndex = 0;
         const frameCount = endFrame - startFrame;
 
@@ -378,9 +386,9 @@ class VideoPlayer {
             currentIndex = (currentIndex + 1) % frameCount;
 
             // 使用 1/30 秒的间隔来播放，保持流畅
-            setTimeout(() => requestAnimationFrame(animate), 1000 / 35);
+            setTimeout(() => requestAnimationFrame(animate), 1000 / this.fps);
         };
-        if(!this.isAnimating){
+        if (!this.isAnimating) {
             requestAnimationFrame(animate);
         }
 
