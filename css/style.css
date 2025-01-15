@@ -134,19 +134,16 @@ html, body {
 }
 
 .dialog-content .message {
-    margin-bottom: 12px;
-    padding: 8px 12px;
+
     border-radius: 8px;
     word-wrap: break-word;
 }
 
 .dialog-content .user-message {
-    background-color: rgba(227, 242, 253, 0.9);
     margin-left: 20px;
 }
 
 .dialog-content .live2d-message {
-    background-color: rgba(245, 245, 245, 0.9);
     margin-right: 20px;
 }
 
@@ -189,7 +186,6 @@ html, body {
 .message-header {
     font-size: 11px;
     color: rgba(255, 255, 255, 0.6);
-    margin-bottom: 4px;
 }
 
 .message-content {
@@ -245,7 +241,7 @@ html, body {
 
 /* 调整对话内容区域的最大高度，为输入框留出空间 */
 .dialog-content {
-    max-height: 220px;
+    max-height: 140px;
 }
 
 /* 移动端适配 */
@@ -328,7 +324,7 @@ html, body {
     top: 20px;
     left: 20px;
     width: 100%;
-    max-width: 300px;
+    max-width: 400px;
     height: auto;
     z-index: 100;
     pointer-events: none;
@@ -339,7 +335,7 @@ html, body {
 
 #videoCanvas {
     max-width: 100%;
-    max-height: 400px;
+    max-height: 500px;
     width: auto;
     height: auto;
     object-fit: contain;
@@ -347,20 +343,19 @@ html, body {
 }
 
 .message {
-    margin: 6px;
-    padding: 8px 10px;
+
     max-width: 90%;
     color: #fff;
 }
 
 .user-message {
-    background-color: #e3f2fd;
+    color: rgba(255, 255, 255, 0.9);
     margin-left: auto;
     text-align: right;
 }
 
 .live2d-message {
-    background-color: #f5f5f5;
+    color: rgba(255, 255, 255, 0.9);
     margin-right: auto;
     text-align: left;
 }
@@ -368,7 +363,6 @@ html, body {
 .message-header {
     font-size: 11px;
     color: rgba(255, 255, 255, 0.6);
-    margin-bottom: 4px;
 }
 
 .message-content {
@@ -523,23 +517,23 @@ html, body {
 /* 响应式设计 */
 @media (max-width: 768px) {
     #video-canvas-container {
-        max-width: 200px;
+        max-width: 280px;
         top: 10px;
         left: 10px;
     }
     
     #videoCanvas {
-        max-height: 300px;
+        max-height: 400px;
     }
 }
 
 /* 竖屏适配 */
 @media (max-aspect-ratio: 1/1) {
     #video-canvas-container {
-        max-width: 150px;
+        max-width: 220px;
     }
     
     #videoCanvas {
-        max-height: 200px;
+        max-height: 300px;
     }
 }
