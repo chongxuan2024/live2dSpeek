@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>VR看房</title>
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+<body>
+    <div class="container">
+        <!-- 视频画板容器 -->
+        <div id="video-canvas-container">
+            <canvas id="videoCanvas"></canvas>
+        </div>
+        <!-- 对话记录显示框 -->
+        <div id="dialogBox" class="dialog-box">
+            <div id="dialog-content" class="dialog-content"></div>
+        </div>
+
+        <!-- 底部输入框 -->
+        <div class="input-container">
+            <input type="text" id="userInput" class="dialog-input" placeholder="请输入您的问题...">
+            <div class="button-group">
+                <button id="sendMessage" class="dialog-send-btn">发送</button>
+                <button id="changeHouse" class="dialog-btn">切换</button>
+                <button id="resetHouse" class="dialog-btn">重置</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/video-player.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
