@@ -8,23 +8,23 @@ class VideoPlayer {
         this.video.muted = true;
         this.video.playsInline = true;
         this.video.loop = false;
-        this.fps = 36.29;
+        this.fps = 30;
         this.isPlaying = false;
         this.silenceThreshold = -40;
         this.loopPlaying = false;
         this.isSyncPlaying = false;
-        this.speakingStartFrame = 0.2;
-        this.speakingEndFrame = 1.6;
-        this.silenceStartFrame = 2;
-        this.silenceEndFrame = 3.0; // 最大是3.4
+        this.speakingStartFrame = 0;
+        this.speakingEndFrame = 3.8;
+        this.silenceStartFrame = 6.5;
+        this.silenceEndFrame = 10; // 最大是3.4
         // 不说话的loop可以是一个比较长的
         // 如果说话的长度比较大，也可以包含一个有动作的
-
+        this.audioContext = null;
     }
 
     async loadVideo() {
         return new Promise((resolve, reject) => {
-            this.video.src = 'video/speaker3.mp4';
+            this.video.src = 'video/speakerMan.mp4';
             this.video.crossOrigin = 'anonymous';
 
             this.video.addEventListener('loadedmetadata', () => {
@@ -81,24 +81,30 @@ class VideoPlayer {
     }
 
     async syncWithAudio(audioPath) {
+        // 停止当前所有播放
+        this.stopLoop();
+        this.video.pause();
+        this.isPlaying = false;
+        
+        // 等待视频完全停止
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        // 重置音频上下文
+        if (this.audioContext) {
+            await this.audioContext.close();
+        }
+        this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
         try {
             this.isSyncPlaying = true;
-            this.stopLoop();
-            if (this.isPlaying) {
-                while (this.isPlaying) {
-                    await new Promise(resolve => setTimeout(resolve, 10));
-                }
-            }
 
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
             const response = await fetch(audioPath);
             const arrayBuffer = await response.arrayBuffer();
-            const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+            const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
 
-            const analyser = audioContext.createAnalyser();
+            const analyser = this.audioContext.createAnalyser();
             analyser.fftSize = 2048;
-            const bufferLength = analyser.frequencyBinCount;
-            const sampleRate = audioContext.sampleRate;
+            const sampleRate = this.audioContext.sampleRate;
             const samplesPerFrame = Math.floor(sampleRate / this.fps);
 
             const audioSegments = [];
@@ -204,18 +210,22 @@ class VideoPlayer {
                             duration = 0;
                             break;
                         }
-                        timeRanges.push([this.silenceStartFrame, Math.min(this.silenceEndFrame, this.silenceStartFrame + duration)]);
+                        timeRanges.push([this.silenceStartFrame, Math.min(this.silenceEndFrame-0.03, this.silenceStartFrame + duration-0.03)]);
                         duration = duration - (this.silenceEndFrame - this.silenceStartFrame);
                     } while (duration > 0);
                 }
+            }
+            // 如果最后一个片段是静音片段，则删除最后一个片段
+            if (timeRanges.length > 0 && timeRanges[timeRanges.length - 1][0] === this.silenceStartFrame) {
+                timeRanges.pop();
             }
 
             console.log('音频片段分析结果:', audioSegments);
             console.log('对应的时间范围:', timeRanges);
 
-            const source = audioContext.createBufferSource();
+            const source = this.audioContext.createBufferSource();
             source.buffer = audioBuffer;
-            source.connect(audioContext.destination);
+            source.connect(this.audioContext.destination);
 
             return new Promise(async (resolve) => {
                 source.start();
@@ -224,6 +234,10 @@ class VideoPlayer {
                 this.isSyncPlaying = false;
                 this.startLoop();
                 source.onended = () => {
+                    if (this.audioContext) {
+                        this.audioContext.close();
+                        this.audioContext = null;
+                    }
                     resolve();
                 };
             });
@@ -231,22 +245,17 @@ class VideoPlayer {
         } catch (error) {
             console.error('音频同步错误:', error);
             this.isSyncPlaying = false;
+            if (this.audioContext) {
+                await this.audioContext.close();
+                this.audioContext = null;
+            }
             this.startLoop();
             throw error;
         }
     }
 
-    interrupt() {
-        this.needInterrupted = true;
-    }
-
     async playVideoSequence(timeRanges) {
         for (const range of timeRanges) {
-            if (this.needInterrupted) {
-                console.log('播放序列被打断');
-                break;
-            }
-
             try {
                 await this.playVideoRange(range[0], range[1]);
             } catch (error) {
